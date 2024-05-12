@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Overseas Migrant Arrivals by World Region</title>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <style>
+        .region {
+            fill: lightblue;
+            stroke: black;
+            stroke-width: 0.5px;
+        }
+        .dot {
+            fill: red;
+            stroke: black;
+            stroke-width: 0.5px;
+        }
+        .tooltip {
+            position: absolute;
+            text-align: center;
+            width: 120px;
+            height: auto;
+            padding: 5px;
+            font: 12px sans-serif;
+            background: lightsteelblue;
+            border: 0px;
+            border-radius: 8px;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="tooltip" class="tooltip" style="opacity:0;"></div>
+    <script>
+        // Width and height of the SVG
+        const width = 960;
+        const height = 600;
+
+        // Create an SVG element
+        const svg = d3.select("body").append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        // Define a geographical projection
+        const projection = d3.geoMercator()
+            .scale(150)
+            .translate([width / 2, height / 1.5]);
+
+        const path = d3.geoPath().projection(projection);
+
+        // Load and process the world map data
+        d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson").then(function(data) {
+            // Draw the map
+            svg.selectAll("path")
+                .data(data.features)
+                .enter().append("path")
+                .attr("class", "region")
+                .attr("d", path);
+
+            // Load the migrant arrivals data
+            const migrantData = [
+                {"Region": "Oceania (ex Aust. born)", "Arrivals": 214.49, "Coordinates": {"lat": -25.2744, "lon": 133.7751}},
+                {"Region": "North-West Europe", "Arrivals": 276.63, "Coordinates": {"lat": 54.5260, "lon": 15.2551}},
+                {"Region": "Southern & Eastern Europe", "Arrivals": 86.33, "Coordinates": {"lat": 45.9432, "lon": 24.9668}},
+                {"Region": "North Africa & Middle East", "Arrivals": 130.76, "Coordinates": {"lat": 26.8206, "lon": 30.8025}},
+                {"Region": "South-East Asia", "Arrivals": 405.99, "Coordinates": {"lat": 13.7367, "lon": 100.5231}},
+                {"Region": "North-East Asia", "Arrivals": 496.23, "Coordinates": {"lat": 35.8617, "lon": 104.1954}},
+                {"Region": "Southern & Central Asia", "Arrivals": 661.57, "Coordinates": {"lat": 30.3753, "lon": 69.3451}},
+                {"Region": "Americas", "Arrivals": 207.19, "Coordinates": {"lat": 37.0902, "lon": -95.7129}},
+                {"Region": "Sub-Saharan Africa", "Arrivals": 102.5, "Coordinates": {"lat": -1.9403, "lon": 29.8739}}
+            ];
+
+            // Create a tooltip
+            const tooltip = d3.select("#tooltip");
+
+            // Add dots for each region
+            svg.selectAll("circle")
+                .data(migrantData)
+                .enter().append("circle")
+                .attr("class", "dot")
+                .attr("cx", d => projection([d.Coordinates.lon, d.Coordinates.lat])[0])
+                .attr("cy", d => projection([d.Coordinates.lon, d.Coordinates.lat])[1])
+                .attr("r", 5)
+                .on("mouseover", function(event, d) {
+                    tooltip.transition().duration(200).style("opacity", .9);
+                    tooltip.html(`${d.Region}: ${d.Arrivals}`)
+                        .style("left", (event.pageX + 5) + "px")
+                        .style("top", (event.pageY - 28) + "px");
+                })
+                .on("mouseout", function(d) {
+                    tooltip.transition().duration(500).style("opacity", 0);
+                });
+        });
+    </script>
+</body>
+</html>
