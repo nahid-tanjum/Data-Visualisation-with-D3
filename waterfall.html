@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doctor Migration to Australia (2012-2021) - Triangle Column Chart</title>
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+</head>
+<body>
+
+<script>
+
+// Data
+const data = {
+  "2012": 75258,
+  "2013": 77974,
+  "2014": 80968,
+  "2015": 83490,
+  "2016": 86550,
+  "2017": 90417,
+  "2018": 93604,
+  "2019": 97039,
+  "2020": 100260,
+  "2021": 103196
+};
+
+const years = Object.keys(data);
+const migrationNumbers = Object.values(data);
+
+// Create SVG container
+const svgWidth = 800;
+const svgHeight = 500;
+const margin = { top: 50, right: 50, bottom: 50, left: 50 };
+const width = svgWidth - margin.left - margin.right;
+const height = svgHeight - margin.top - margin.bottom;
+
+const svg = d3.select("body")
+  .append("svg")
+  .attr("width", svgWidth)
+  .attr("height", svgHeight)
+  .append("g")
+  .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+// Create scales
+const xScale = d3.scaleBand()
+  .domain(years)
+  .range([0, width])
+  .padding(0.1);
+
+const yScale = d3.scaleLinear()
+  .domain([0, d3.max(migrationNumbers)])
+  .range([height, 0]);
+
+// Draw triangle columns
+svg.selectAll("path")
+  .data(migrationNumbers)
+  .enter().append("path")
+  .attr("d", (d, i) => {
+    const x = xScale(years[i]) + xScale.bandwidth() / 2;
+    const y = yScale(d);
+    const heightTriangle = height - y;
+    return `M${x},${y} L${x - heightTriangle / 2},${height} L${x + heightTriangle / 2},${height} Z`;
+  })
+  .attr("fill", "steelblue");
+
+// Add x axis
+svg.append("g")
+  .attr("transform", `translate(0, ${height})`)
+  .call(d3.axisBottom(xScale));
+
+// Add y axis
+svg.append("g")
+  .call(d3.axisLeft(yScale));
+
+// Add title
+svg.append("text")
+  .attr("x", width / 2)
+  .attr("y", -20)
+  .attr("text-anchor", "middle")
+  .attr("font-size", "18px")
+  .text("Doctor Migration to Australia (2012-2021) - Triangle Column Chart");
+
+</script>
+
+</body>
+</html>

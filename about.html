@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Health Data Visualization</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: linear-gradient(to right, #4e8fd9, #4c77b1);
+            color: white;
+            padding: 5px;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+
+        header .logo {
+            font-size: 24px;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin-right: 20px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+        }
+
+        nav ul li a.active {
+            text-decoration: underline;
+        }
+
+        main {
+            flex: 1;
+            padding: 20px;
+            background: white;
+            margin: 20px 20px 0 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #4c77b1;
+            color: white;
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Logo</div>
+        <div class="team-info">
+            <h1>Group CL03_T08</h1>
+            <p>Tan Dat Do</p>
+            <p>Md Nahid Tanjum</p>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                <li><a href="about.html" class="active">About</a></li>
+                <li><a href="data.html">Data</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main>
+        <h1>About Us</h1>
+        <p>We are a data visualization team focused on presenting complex health data in an understandable format. Our goal is to provide insights into health trends and statistics through comprehensive visual tools.</p>
+        <h2>Our Team</h2>
+        <p>Tan Dat Do, Md Nahid Tanjum, and others who contribute to the project.</p>
+        <h2>Our Mission</h2>
+        <p>To enhance public understanding of health data and support informed decision-making through high-quality visualizations.</p>
+    </main>
+
+    <footer>
+        <p>© 2024 Health Data Visualization. All rights reserved.</p>
+        <p>Privacy | Accessibility | Disclaimer</p>
+    </footer>
+</body>
+</html>
