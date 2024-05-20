@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Line Chart with D3.js</title>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <style>
+        .node circle {
+            fill: steelblue;
+            stroke: white;
+            stroke-width: 1.5px;
+        }
+        .node text {
+            font: 10px sans-serif;
+        }
+        .tooltip {
+            position: absolute;
+            text-align: center;
+            width: auto;
+            height: auto;
+            padding: 6px;
+            font: 12px sans-serif;
+            background: lightsteelblue;
+            border: 0px;
+            border-radius: 8px;
+            pointer-events: none;
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+    <svg width="960" height="500"></svg>
+    <div class="tooltip"></div>
+    <script>
+        d3.csv("Total_Number_Doctors_new.csv").then(function(data) {
+            const years = ['2015', '2016', '2017', '2018', '2019', '2020', '2021'];
+            var countriesData = data.map(function(country) {
+                return {
+                    country: country.Country,
+                    values: years.map(function(year) {
+                        return { year: d3.timeParse("%Y")(year), value: +country[year] };
+                    })
+                };
+            });
+
+            var margin = {top: 20, right: 120, bottom: 30, left: 50},
+                width = 960 - margin.left - margin.right,
+                height = 500 - margin.top - margin.bottom,
+                svg = d3.select("svg").append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")"),
+                tooltip = d3.select(".tooltip");
+
+            var x = d3.scaleTime()
+                .domain(d3.extent(years, d => d3.timeParse("%Y")(d)))
+                .range([0, width]);
+
+            var y = d3.scaleLinear()
+                .domain([d3.min(countriesData, c => d3.min(c.values, v => v.value)),
+                         d3.max(countriesData, c => d3.max(c.values, v => v.value))])
+                .range([height, 0]);
+
+            svg.append("g")
+                .attr("transform", "translate(0," + y(0) + ")")
+                .call(d3.axisBottom(x));
+
+            svg.append("g")
+                .call(d3.axisLeft(y));
+
+            var color = d3.scaleOrdinal(d3.schemeCategory10);
+            var line = d3.line()
+                .x(d => x(d.year))
+                .y(d => y(d.value));
+
+            var countryGroups = svg.selectAll(".countryGroup")
+                .data(countriesData)
+                .enter().append("g")
+                .attr("class", "countryGroup");
+
+            countryGroups.each(function(d) {
+                var group = d3.select(this);
+                group.append("path")
+                    .datum(d.values)
+                    .attr("class", "line")
+                    .attr("d", line)
+                    .attr("fill", "none")
+                    .attr("stroke", () => color(d.country))
+                    .attr("stroke-width", 2);
+
+                group.selectAll("circle")
+                    .data(d.values)
+                    .enter().append("circle")
+                    .attr("cx", d => x(d.year))
+                    .attr("cy", d => y(d.value))
+                    .attr("r", 5)
+                    .attr("fill", color(d.country))
+                    .on("mouseover", (event, point) => {
+                        tooltip.transition()
+                               .duration(200)
+                               .style("opacity", .9);
+                        tooltip.html(d.country + "<br/>Year: " + d3.timeFormat("%Y")(point.year) + "<br/>Value: " + point.value)
+                               .style("left", (event.pageX) + "px")
+                               .style("top", (event.pageY - 28) + "px");
+                    })
+                    .on("mouseout", () => {
+                        tooltip.transition()
+                               .duration(500)
+                               .style("opacity", 0);
+                    });
+            });
+        });
+    </script>
+</body>
+</html>
